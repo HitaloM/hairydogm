@@ -10,7 +10,8 @@ from contextvars import ContextVar
 from pathlib import Path
 
 from babel.support import LazyProxy
-from korone.utils.mixin import ContextInstanceMixin
+
+from hairydogm.mixins import ContextInstanceMixin
 
 
 class I18n(ContextInstanceMixin["I18n"]):
@@ -75,7 +76,7 @@ class I18n(ContextInstanceMixin["I18n"]):
         self.path = Path(path)
         self.default_locale = default_locale
         self.domain = domain
-        self.ctx_locale = ContextVar("korone_ctx_locale", default=default_locale)
+        self.ctx_locale = ContextVar("hydrogram_ctx_locale", default=default_locale)
         self.locales = self.find_locales()
 
     @property
