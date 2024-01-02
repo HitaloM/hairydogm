@@ -1,0 +1,7 @@
+.venv
+.vscode
+.ruff_cache
+.python-version
+requirements.lock
+requirements-dev.lock
+__pycache__
