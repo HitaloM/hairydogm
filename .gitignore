@@ -5,3 +5,4 @@
 requirements.lock
 requirements-dev.lock
 __pycache__
+dist/

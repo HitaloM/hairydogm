@@ -1,15 +1,32 @@
 [project]
 name = "hairydogm"
-version = "0.1.0"
+version = "0.1.1"
 description = "Some utilities from AIOgram adapted to be used with Hydrogram."
 authors = [{ name = "Hitalo" }]
-dependencies = [
-    "hydrogram>=0.1.4",
-    "babel>=2.14.0",
-]
+dependencies = ["hydrogram>=0.1.4", "babel>=2.14.0"]
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+keywords = ["telegram", "bot", "asyncio", "hydrogram", "hairydogm", "aiogram"]
+
+[project.urls]
+homepage = "https://github.com/HitaloM/hairydogm"
+tracker = "https://github.com/HitaloM/hairydogm/issues"
+community = "https://t.me/HitaloProjects"
+source = "https://github.com/HitaloM/hairydogm"
+documentation = "https://hairydogm.readthedocs.io/"
 
 [build-system]
 requires = ["hatchling"]
@@ -17,7 +34,7 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["pre-commit>=3.6.0", "ruff>=0.1.9"]
+dev-dependencies = ["pre-commit>=3.6.0", "ruff>=0.1.11"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
