@@ -1,0 +1,7 @@
+Core
+====
+
+.. automodule:: hairydogm.i18n.core
+   :members:
+   :undoc-members:
+   :show-inheritance:

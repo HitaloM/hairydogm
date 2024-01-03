@@ -13,17 +13,6 @@ class ContextInstanceMixin(Generic[ContextInstance]):
     Mixin class for managing context instances.
 
     This mixin class is responsible for managing context instances.
-
-    Methods
-    -------
-    get_current(no_error: bool = True) -> ContextInstance | None:
-        Get the current context instance.
-
-    set_current(value: ContextInstance) -> contextvars.Token[ContextInstance]:
-        Set the current context instance.
-
-    reset_current(token: contextvars.Token[ContextInstance]) -> None:
-        Reset the current context instance.
     """
 
     __context_instance: contextvars.ContextVar[ContextInstance]

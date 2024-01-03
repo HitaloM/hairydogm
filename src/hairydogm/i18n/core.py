@@ -30,41 +30,7 @@ class I18n(ContextInstanceMixin["I18n"]):
         The default locale to use if no locale is specified. Default is "en".
     domain : str, optional
         The translation domain. Default is "bot".
-
-    Attributes
-    ----------
-    path : Path
-        The path to the directory containing the translation files.
-    default_locale : str
-        The default locale to use if no locale is specified.
-    domain : str
-        The translation domain.
-    ctx_locale : ContextVar
-        The context variable for storing the current locale.
-    locales : dict[str, gettext.GNUTranslations]
-        A dictionary mapping locale names to translation objects.
-
-    Methods
-    -------
-    current_locale() -> str:
-        Get the current locale.
-    current_locale(value: str) -> None:
-        Set the current locale.
-    use_locale(locale: str) -> Generator[None, None, None]:
-        Context manager for temporarily setting the current locale.
-    context() -> Generator["I18n", None, None]:
-        Context manager for using the I18n instance as the current instance.
-    find_locales() -> dict[str, gettext.GNUTranslations]:
-        Find all available locales and their corresponding translation objects.
-    reload() -> None:
-        Reload the available locales.
-    available_locales() -> tuple[str, ...]:
-        Get a tuple of all available locales.
-    gettext(singular: str, plural: str | None = None, n: int = 1, locale: str | None = None) -> str:
-        Get the translated string for the given singular or plural form.
-    lazy_gettext(singular: str, plural: str | None = None, n: int = 1, locale: str | None = None) -> LazyProxy:
-        Get a lazy proxy for the translated string.
-    """  # noqa: E501
+    """
 
     def __init__(
         self,

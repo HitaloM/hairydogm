@@ -41,23 +41,6 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         The type of buttons to be used in the keyboard, by default InlineKeyboardButton.
     markup : List[List[ButtonType]] | None, optional
         The initial markup of the keyboard, by default None.
-
-    Methods
-    -------
-    buttons() -> Generator[ButtonType, None, None]
-        A generator that yields all the buttons in the keyboard.
-    add(*buttons: ButtonType) -> InlineKeyboardBuilder[ButtonType]
-        Add buttons to the keyboard.
-    row(*buttons: ButtonType, width: int = MAX_WIDTH) -> InlineKeyboardBuilder[ButtonType]
-        Add a row of buttons to the keyboard.
-    adjust(*sizes: int, repeat: bool = False) -> InlineKeyboardBuilder[ButtonType]
-        Adjust the size of the rows in the keyboard.
-    button(**kwargs: Any) -> InlineKeyboardBuilder[ButtonType]
-        Add a button to the keyboard.
-    as_markup(**kwargs: Any) -> InlineKeyboardMarkup | ReplyKeyboardMarkup
-        Convert the keyboard to a markup object.
-    attach(builder: InlineKeyboardBuilder[ButtonType]) -> InlineKeyboardBuilder[ButtonType]
-        Attach another keyboard builder to the current keyboard.
     """
 
     def __init__(
