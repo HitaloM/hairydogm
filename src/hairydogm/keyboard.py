@@ -20,6 +20,8 @@ from hydrogram.types import (
     ReplyKeyboardMarkup,
 )
 
+from hairydogm.callback_data import CallbackData
+
 ButtonType = TypeVar("ButtonType", bound=InlineKeyboardButton)
 T = TypeVar("T")
 MAX_WIDTH: int = 8
@@ -341,6 +343,9 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         InlineKeyboardBuilder[ButtonType]
             The updated instance of InlineKeyboardBuilder.
         """
+        if isinstance(callback_data := kwargs.get("callback_data", None), CallbackData):
+            kwargs["callback_data"] = callback_data.pack()
+
         button = self._button_type(**kwargs)
         return self.add(button)
 
