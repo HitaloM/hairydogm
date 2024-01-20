@@ -3,7 +3,12 @@ name = "hairydogm"
 dynamic = ["version"]
 description = "Some utilities from AIOgram adapted to be used with Hydrogram."
 authors = [{ name = "Hitalo" }]
-dependencies = ["hydrogram>=0.1.4", "babel>=2.14.0"]
+dependencies = [
+    "hydrogram>=0.1.4",
+    "babel>=2.14.0",
+    "magic-filter>=1.0.12",
+    "pydantic>=2.5.3",
+]
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
