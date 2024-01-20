@@ -175,7 +175,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
 
         Parameters
         ----------
-        size : Any
+        size : typing.Any
             The size to validate.
 
         Raises
@@ -333,7 +333,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
 
         Parameters
         ----------
-        **kwargs : Any
+        **kwargs : typing.Any
             The keyword arguments to create the button.
 
         Returns

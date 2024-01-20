@@ -38,9 +38,9 @@ def gettext(*args: Any, **kwargs: Any) -> str:
 
     Parameters
     ----------
-    *args : Any
+    *args : typing.Any
         Positional arguments for the message.
-    **kwargs : Any
+    **kwargs : typing.Any
         Keyword arguments for the message.
 
     Returns
@@ -62,9 +62,9 @@ def lazy_gettext(*args: Any, **kwargs: Any) -> LazyProxy:
 
     Parameters
     ----------
-    *args : Any
+    *args : typing.Any
         Positional arguments to be passed to the `gettext` function.
-    **kwargs : Any
+    **kwargs : typing.Any
         Keyword arguments to be passed to the `gettext` function.
 
     Returns

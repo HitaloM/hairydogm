@@ -6,10 +6,10 @@ from .context import get_i18n, gettext, lazy_gettext, lazy_ngettext, ngettext
 from .core import I18n
 
 __all__ = (
+    "I18n",
     "get_i18n",
     "gettext",
     "lazy_gettext",
     "lazy_ngettext",
     "ngettext",
-    "I18n",
 )

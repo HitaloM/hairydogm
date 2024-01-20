@@ -8,7 +8,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -46,7 +46,7 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["pre-commit>=3.6.0", "ruff>=0.1.11"]
+dev-dependencies = ["pre-commit>=3.6.0", "ruff>=0.1.14"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -70,6 +70,7 @@ select = [
     "G",    # flake8-logging-format
     "TID",  # flake8-tidy-imports
 ]
+preview = true
 
 [tool.ruff.isort]
 known-first-party = ["src/hairydogm"]

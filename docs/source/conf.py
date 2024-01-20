@@ -15,17 +15,20 @@ release = hairydogm.__version__
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
 ]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "babel": ("https://babel.pocoo.org/en/latest", None),
-    "hydrogram": ("https://docs.pyrogram.org/", None),
+    "hydrogram": ("https://docs.hydrogram.org/en/latest/", None),
+    "babel": ("https://babel.pocoo.org/en/latest/", None),
 }
+
+html_use_modindex = False
+html_use_index = False
 
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
@@ -39,14 +42,15 @@ autodoc_member_order = "bysource"
 
 pygments_style = "friendly"
 
+napoleon_use_admonition_for_examples = True
+
+autodoc_typehints = "none"
 
 html_theme = "furo"
-html_title = f"{project} documentation v{release}"
-html_static_path = ["_static"]
-html_css_files = [
-    "css/all.min.css",
-    "css/custom.css",
-]
+html_title = f"{project} Docs - {release}"
+html_last_updated_fmt = (
+    f"{datetime.datetime.now(tz=datetime.UTC).strftime('%d/%m/%Y, %H:%M:%S')} UTC"
+)
 html_copy_source = False
 
 html_theme_options = {

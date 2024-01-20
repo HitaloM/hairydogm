@@ -26,7 +26,7 @@ class ContextInstanceMixin(Generic[ContextInstance]):
 
         Parameters
         ----------
-        **kwargs : Any
+        **kwargs : typing.Any
             Keyword arguments.
         """
         super().__init_subclass__()
