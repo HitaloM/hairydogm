@@ -235,7 +235,7 @@ class CallbackQueryFilter(BaseFilter):
         rule: MagicFilter | None = None,
     ):
         self.callback_data = callback_data
-        self.rule = rule if rule is not None else lambda x: True
+        self.rule = rule
 
     def __str__(self) -> str:
         return self._signature_to_string(
