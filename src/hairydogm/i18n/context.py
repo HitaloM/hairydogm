@@ -6,7 +6,7 @@ from typing import Any
 
 from babel.support import LazyProxy
 
-from .core import I18n
+from hairydogm.i18n.core import I18n
 
 
 def get_i18n() -> I18n:

@@ -16,11 +16,13 @@ from typing import (
 )
 from uuid import UUID
 
-from hydrogram.filters import Filter
+from hydrogram import Client
 from hydrogram.types import CallbackQuery
 from magic_filter import MagicFilter
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
+
+from hairydogm.filters.base import BaseFilter
 
 T = TypeVar("T", bound="CallbackData")
 
@@ -39,15 +41,6 @@ class CallbackData(BaseModel):
         Data separator (default is ':')
     __prefix__ : ClassVar[str]
         Callback prefix
-
-    Methods
-    -------
-    pack()
-        Generate callback data string
-    unpack(value)
-        Parse callback data string
-    filter(rule=None)
-        Generates a filter for callback query with rule
     """
 
     __separator__: ClassVar[str]
@@ -59,13 +52,14 @@ class CallbackData(BaseModel):
                 f"prefix required, usage example: "
                 f"`class {cls.__name__}(CallbackData, prefix='my_callback'): ...`"
             )
+        separator = kwargs.get("sep", ":")
+        prefix = kwargs.get("prefix")
+        if separator in prefix:
+            raise ValueError(
+                f"Separator symbol {separator!r} can not be used " f"inside prefix {prefix!r}"
+            )
         cls.__separator__ = kwargs.pop("sep", ":")
         cls.__prefix__ = kwargs.pop("prefix")
-        if cls.__separator__ in cls.__prefix__:
-            raise ValueError(
-                f"Separator symbol {cls.__separator__!r} can not be used "
-                f"inside prefix {cls.__prefix__!r}"
-            )
         super().__init_subclass__(**kwargs)
 
     def _encode_value(self, key: str, value: Any) -> str:
@@ -78,7 +72,7 @@ class CallbackData(BaseModel):
         ----------
         key : str
             The key of the value.
-        value : Any
+        value : typing.Any
             The value to be encoded.
 
         Returns
@@ -94,18 +88,25 @@ class CallbackData(BaseModel):
 
         if value is None:
             return ""
-        if isinstance(value, Enum):
-            return str(value.value)
-        if isinstance(value, UUID):
-            return value.hex
-        if isinstance(value, bool):
-            return str(int(value))
-        if isinstance(value, int | str | float | Decimal | Fraction):
-            return str(value)
-        raise ValueError(
-            f"Attribute {key}={value!r} of type {type(value).__name__!r}"
-            f" can not be packed to callback data"
-        )
+
+        type_to_str = {
+            Enum: lambda v: str(v.value),
+            UUID: lambda v: v.hex,
+            bool: lambda v: str(int(v)),
+            int: str,
+            str: str,
+            float: str,
+            Decimal: str,
+            Fraction: str,
+        }
+
+        try:
+            return type_to_str[type(value)](value)
+        except KeyError:
+            raise ValueError(
+                f"Attribute {key}={value!r} of type {type(value).__name__!r}"
+                f" can not be packed to callback data"
+            )
 
     def pack(self) -> str:
         """
@@ -176,12 +177,14 @@ class CallbackData(BaseModel):
             )
         if prefix != cls.__prefix__:
             raise ValueError(f"Bad prefix ({prefix!r} != {cls.__prefix__!r})")
-        payload = {}
-        for k, v in zip(names, parts):
-            field = cls.model_fields.get(k)
-            if field and v == "" and _check_field_is_nullable(field):
-                v = None
-            payload[k] = v
+
+        nullable_fields = {
+            k for k, field in cls.model_fields.items() if _check_field_is_nullable(field)
+        }
+        payload = {
+            k: v if v != "" or k not in nullable_fields else None for k, v in zip(names, parts)
+        }
+
         return cls(**payload)
 
     @classmethod
@@ -205,7 +208,7 @@ class CallbackData(BaseModel):
         return CallbackQueryFilter(callback_data=cls, rule=rule)
 
 
-class CallbackQueryFilter(Filter):
+class CallbackQueryFilter(BaseFilter):
     """
     This filter helps to handle callback query.
 
@@ -232,7 +235,7 @@ class CallbackQueryFilter(Filter):
         rule: MagicFilter | None = None,
     ):
         self.callback_data = callback_data
-        self.rule = rule
+        self.rule = rule if rule is not None else lambda x: True
 
     def __str__(self) -> str:
         return self._signature_to_string(
@@ -240,13 +243,28 @@ class CallbackQueryFilter(Filter):
             rule=self.rule,
         )
 
-    def _signature_to_string(self, *args: Any, **kwargs: Any) -> str:
-        items = [repr(arg) for arg in args]
-        items.extend([f"{k}={v!r}" for k, v in kwargs.items() if v is not None])
+    async def __call__(
+        self, client: Client, query: CallbackQuery
+    ) -> Literal[False] | dict[str, Any]:
+        """
+        Execute the callback data filter.
 
-        return f"{type(self).__name__}({', '.join(items)})"
+        This method is used to execute the callback data filter.
 
-    async def __call__(self, _, query: CallbackQuery) -> Literal[False] | dict[str, Any]:
+        Parameters
+        ----------
+        client : Client
+            The client instance.
+        query : CallbackQuery
+            The callback query object.
+
+        Returns
+        -------
+        Literal[False] | dict[str, Any] :
+            Returns False if the query is not a valid callback
+            query or if the callback data cannot be unpacked. Otherwise, returns a dictionary
+            containing the unpacked callback data.
+        """
         if not isinstance(query, CallbackQuery) or not query.data:
             return False
         try:
@@ -275,11 +293,7 @@ def _check_field_is_nullable(field: FieldInfo) -> bool:
     bool
         True if the field is nullable, False otherwise.
     """
-    if not field.is_required():
-        return True
-
-    return (
-        typing.get_origin(field.annotation) in typing.get_args(field.annotation)
-        if typing.get_origin(field.annotation) is typing.Union
-        else False
+    return not field.is_required() or (
+        typing.get_origin(field.annotation) is typing.Union
+        and None in typing.get_args(field.annotation)
     )

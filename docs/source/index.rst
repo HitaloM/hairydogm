@@ -8,5 +8,6 @@ Contents
    :maxdepth: 3
 
    i18n
+   filters
    keyboard
    mixins

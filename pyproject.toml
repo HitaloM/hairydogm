@@ -65,20 +65,27 @@ select = [
     "W",    # pycodestyle
     "UP",   # pyupgrade
     "F",    # pyflakes
+    "PERF", # perflint
+    "N",    # pep8-naming
+    "RUF",  # ruff
+    "FURB", # refurb
     "SIM",  # flake8-simplify
     "RET",  # flake8-return
     "C4",   # flake8-comprehensions
     "PTH",  # flake8-use-pathlib
-    "PERF", # perflint
-    "N",    # pep8-naming
-    "RUF",  # ruff
     "G",    # flake8-logging-format
     "TID",  # flake8-tidy-imports
 ]
 preview = true
 
 [tool.ruff.isort]
-known-first-party = ["src/hairydogm"]
+known-first-party = ["src"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hairydogm"]

@@ -20,7 +20,7 @@ from hydrogram.types import (
     ReplyKeyboardMarkup,
 )
 
-from hairydogm.callback_data import CallbackData
+from hairydogm.filters.callback_data import CallbackData
 
 ButtonType = TypeVar("ButtonType", bound=InlineKeyboardButton)
 T = TypeVar("T")
