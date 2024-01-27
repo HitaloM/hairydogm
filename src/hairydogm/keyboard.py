@@ -17,16 +17,12 @@ from typing import (
 from hydrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    ReplyKeyboardMarkup,
 )
 
 from hairydogm.filters.callback_data import CallbackData
 
 ButtonType = TypeVar("ButtonType", bound=InlineKeyboardButton)
 T = TypeVar("T")
-MAX_WIDTH: int = 8
-MIN_WIDTH: int = 1
-MAX_BUTTONS: int = 100
 
 
 class InlineKeyboardBuilder(Generic[ButtonType]):
@@ -44,6 +40,10 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
     markup : List[List[ButtonType]] | None, optional
         The initial markup of the keyboard, by default None.
     """
+
+    max_width: int = 8
+    min_width: int = 1
+    max_buttons: int = 100
 
     def __init__(
         self,
@@ -136,8 +136,8 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
                 f"Row {row!r} should be type 'List[{self._button_type.__name__}]' "
                 f"not type {type(row).__name__}"
             )
-        if len(row) > MAX_WIDTH:
-            raise ValueError(f"Row {row!r} is too long (MAX_WIDTH={MAX_WIDTH})")
+        if len(row) > self.max_width:
+            raise ValueError(f"Row {row!r} is too long (max width: {self.max_width})")
         self._validate_buttons(*row)
 
     def _validate_markup(self, markup: list[list[ButtonType]]) -> None:
@@ -163,8 +163,8 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
                 f"not type {type(markup).__name__!r}"
             )
         count = sum(len(row) for row in markup)
-        if count > MAX_BUTTONS:
-            raise ValueError(f"Too much buttons detected Max allowed count - {MAX_BUTTONS}")
+        if count > self.max_buttons:
+            raise ValueError(f"Too much buttons detected Max allowed count - {self.max_buttons}")
         for row in markup:
             self._validate_row(row)
 
@@ -187,8 +187,24 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         """
         if not isinstance(size, int):
             raise ValueError("Only int sizes are allowed")
-        if not MIN_WIDTH <= size <= MAX_WIDTH:
-            raise ValueError(f"Row size {size} is not allowed")
+        if size not in range(self.min_width, self.max_width + 1):
+            raise ValueError(
+                f"Row size {size} is not allowed, range: [{self.min_width}, {self.max_width}]"
+            )
+
+    def copy(self: InlineKeyboardBuilder[ButtonType]) -> InlineKeyboardBuilder[ButtonType]:
+        """
+        Create a copy of the current InlineKeyboardBuilder instance.
+
+        This method creates a new instance of the InlineKeyboardBuilder class with the
+        same button type and markup as the current instance.
+
+        Returns
+        -------
+        InlineKeyboardBuilder[ButtonType]
+            A new instance of the InlineKeyboardBuilder class.
+        """
+        return self.__class__(self._button_type, markup=self.export())
 
     @classmethod
     def from_markup(
@@ -246,23 +262,23 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         InlineKeyboardBuilder[ButtonType]
             The updated instance of InlineKeyboardBuilder.
         """
-        self._validate_buttons(*buttons)
         markup = self.export()
 
-        if markup and len(markup[-1]) < MAX_WIDTH:
-            pos = MAX_WIDTH - len(markup[-1])
+        if markup and len(markup[-1]) < self.max_width:
+            last_row = markup[-1]
+            pos = self.max_width - len(last_row)
             head, buttons = buttons[:pos], buttons[pos:]
-            markup[-1].extend(head)
+            last_row.extend(head)
 
         while buttons:
-            row, buttons = buttons[:MAX_WIDTH], buttons[MAX_WIDTH:]
+            row, buttons = buttons[: self.max_width], buttons[self.max_width :]
             markup.append(list(row))
 
         self._markup = markup
         return self
 
     def row(
-        self, *buttons: ButtonType, width: int = MAX_WIDTH
+        self, *buttons: ButtonType, width: int | None = None
     ) -> InlineKeyboardBuilder[ButtonType]:
         """
         Add a row of buttons to the keyboard.
@@ -281,6 +297,9 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         InlineKeyboardBuilder[ButtonType]
             The updated instance of InlineKeyboardBuilder.
         """
+        if width is None:
+            width = self.max_width
+
         self._validate_size(width)
         self._validate_buttons(*buttons)
         self._markup.extend(
@@ -309,7 +328,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         InlineKeyboardBuilder[ButtonType]
             The updated instance of InlineKeyboardBuilder.
         """
-        sizes = sizes or (MAX_WIDTH,)
+        sizes = sizes or (self.max_width,)
         sizes_iter = cycle(sizes) if repeat else chain(sizes, cycle([sizes[-1]]))
         markup = []
         row = []
@@ -349,7 +368,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         button = self._button_type(**kwargs)
         return self.add(button)
 
-    def as_markup(self) -> InlineKeyboardMarkup | ReplyKeyboardMarkup:
+    def as_markup(self) -> InlineKeyboardMarkup:
         """
         Convert the keyboard to a markup object.
 
