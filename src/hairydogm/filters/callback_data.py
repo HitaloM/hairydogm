@@ -16,13 +16,15 @@ from typing import (
 )
 from uuid import UUID
 
-from hydrogram import Client
 from hydrogram.types import CallbackQuery
-from magic_filter import MagicFilter
 from pydantic import BaseModel
-from pydantic.fields import FieldInfo
 
 from hairydogm.filters.base import BaseFilter
+
+if typing.TYPE_CHECKING:
+    from hydrogram import Client
+    from magic_filter import MagicFilter
+    from pydantic.fields import FieldInfo
 
 T = TypeVar("T", bound="CallbackData")
 
@@ -48,21 +50,22 @@ class CallbackData(BaseModel):
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         if "prefix" not in kwargs:
-            raise ValueError(
+            msg = (
                 f"prefix required, usage example: "
                 f"`class {cls.__name__}(CallbackData, prefix='my_callback'): ...`"
             )
+            raise ValueError(msg)
         separator = kwargs.get("sep", ":")
         prefix = kwargs.get("prefix")
         if separator in prefix:
-            raise ValueError(
-                f"Separator symbol {separator!r} can not be used " f"inside prefix {prefix!r}"
-            )
+            msg = f"Separator symbol {separator!r} can not be used " f"inside prefix {prefix!r}"
+            raise ValueError(msg)
         cls.__separator__ = kwargs.pop("sep", ":")
         cls.__prefix__ = kwargs.pop("prefix")
         super().__init_subclass__(**kwargs)
 
-    def _encode_value(self, key: str, value: Any) -> str:
+    @staticmethod
+    def _encode_value(key: str, value: Any) -> str:
         """
         Encode the value to a string representation.
 
@@ -102,11 +105,12 @@ class CallbackData(BaseModel):
 
         try:
             return type_to_str[type(value)](value)
-        except KeyError:
-            raise ValueError(
+        except KeyError as err:
+            msg = (
                 f"Attribute {key}={value!r} of type {type(value).__name__!r}"
                 f" can not be packed to callback data"
             )
+            raise ValueError(msg) from err
 
     def pack(self) -> str:
         """
@@ -129,17 +133,19 @@ class CallbackData(BaseModel):
         for key, value in self.model_dump(mode="json").items():
             encoded = self._encode_value(key, value)
             if self.__separator__ in encoded:
-                raise ValueError(
+                msg = (
                     f"Separator symbol {self.__separator__!r} can not be used "
                     f"in value {key}={encoded!r}"
                 )
+                raise ValueError(msg)
             result.append(encoded)
         callback_data = self.__separator__.join(result)
         if len(callback_data.encode()) > MAX_CALLBACK_LENGTH:
-            raise ValueError(
+            msg = (
                 f"Resulted callback data is too long! "
                 f"len({callback_data!r}.encode()) > {MAX_CALLBACK_LENGTH}"
             )
+            raise ValueError(msg)
         return callback_data
 
     @classmethod
@@ -171,18 +177,21 @@ class CallbackData(BaseModel):
         prefix, *parts = str(value).split(cls.__separator__)
         names = cls.model_fields.keys()
         if len(parts) != len(names):
-            raise TypeError(
+            msg = (
                 f"Callback data {cls.__name__!r} takes {len(names)} arguments "
                 f"but {len(parts)} were given"
             )
+            raise TypeError(msg)
         if prefix != cls.__prefix__:
-            raise ValueError(f"Bad prefix ({prefix!r} != {cls.__prefix__!r})")
+            msg = f"Bad prefix ({prefix!r} != {cls.__prefix__!r})"
+            raise ValueError(msg)
 
         nullable_fields = {
             k for k, field in cls.model_fields.items() if _check_field_is_nullable(field)
         }
         payload = {
-            k: v if v != "" or k not in nullable_fields else None for k, v in zip(names, parts)
+            k: v if v or k not in nullable_fields else None
+            for k, v in zip(names, parts, strict=False)
         }
 
         return cls(**payload)

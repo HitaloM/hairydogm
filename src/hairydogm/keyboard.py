@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from copy import deepcopy
 from itertools import chain, cycle
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     TypeVar,
@@ -20,6 +20,9 @@ from hydrogram.types import (
 )
 
 from hairydogm.filters.callback_data import CallbackData
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 ButtonType = TypeVar("ButtonType", bound=InlineKeyboardButton)
 T = TypeVar("T")
@@ -51,7 +54,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         markup: list[list[ButtonType]] | None = None,
     ) -> None:
         self._button_type: type[ButtonType] = button_type
-        self._markup: list[list[ButtonType]] = markup if markup else []
+        self._markup: list[list[ButtonType]] = markup or []
         if markup:
             self._validate_markup(markup)
 
@@ -89,9 +92,8 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
         """
         allowed = self._button_type
         if not isinstance(button, allowed):
-            raise ValueError(
-                f"{button!r} should be type {allowed.__name__!r} not {type(button).__name__!r}"
-            )
+            msg = f"{button!r} should be type {allowed.__name__!r} not {type(button).__name__!r}"
+            raise ValueError(msg)
 
     def _validate_buttons(self, *buttons: ButtonType) -> bool:
         """
@@ -132,12 +134,14 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
             If the row is not of the correct type or length.
         """
         if not isinstance(row, list):
-            raise ValueError(
+            msg = (
                 f"Row {row!r} should be type 'List[{self._button_type.__name__}]' "
                 f"not type {type(row).__name__}"
             )
+            raise ValueError(msg)
         if len(row) > self.max_width:
-            raise ValueError(f"Row {row!r} is too long (max width: {self.max_width})")
+            msg = f"Row {row!r} is too long (max width: {self.max_width})"
+            raise ValueError(msg)
         self._validate_buttons(*row)
 
     def _validate_markup(self, markup: list[list[ButtonType]]) -> None:
@@ -158,13 +162,15 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
             If the markup is not of the correct type or structure.
         """
         if not isinstance(markup, list):
-            raise ValueError(
+            msg = (
                 f"Markup should be type 'List[List[{self._button_type.__name__}]]' "
                 f"not type {type(markup).__name__!r}"
             )
+            raise ValueError(msg)
         count = sum(len(row) for row in markup)
         if count > self.max_buttons:
-            raise ValueError(f"Too much buttons detected Max allowed count - {self.max_buttons}")
+            msg = f"Too much buttons detected Max allowed count - {self.max_buttons}"
+            raise ValueError(msg)
         for row in markup:
             self._validate_row(row)
 
@@ -186,11 +192,11 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
             If the size is not a valid row size.
         """
         if not isinstance(size, int):
-            raise ValueError("Only int sizes are allowed")
+            msg = "Only int sizes are allowed"
+            raise ValueError(msg)
         if size not in range(self.min_width, self.max_width + 1):
-            raise ValueError(
-                f"Row size {size} is not allowed, range: [{self.min_width}, {self.max_width}]"
-            )
+            msg = f"Row size {size} is not allowed, range: [{self.min_width}, {self.max_width}]"
+            raise ValueError(msg)
 
     def copy(self: InlineKeyboardBuilder[ButtonType]) -> InlineKeyboardBuilder[ButtonType]:
         """
@@ -408,9 +414,10 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
             If the button types of the builders do not match.
         """
         if builder._button_type is not self._button_type:
-            raise ValueError(
+            msg = (
                 f"Only builders with same button type can be attached, "
                 f"not {self._button_type.__name__} and {builder._button_type.__name__}"
             )
+            raise ValueError(msg)
         self._markup.extend(builder.export())
         return self

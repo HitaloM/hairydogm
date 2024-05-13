@@ -84,9 +84,8 @@ class ContextInstanceMixin(Generic[ContextInstance]):
             If the provided value is not an instance of the expected type.
         """
         if not isinstance(value, cls):
-            raise TypeError(
-                f"Value should be instance of {cls.__name__!r} not {type(value).__name__!r}"
-            )
+            msg = f"Value should be instance of {cls.__name__!r} not {type(value).__name__!r}"
+            raise TypeError(msg)
         return cls.__context_instance.set(value)  # type: ignore
 
     @classmethod

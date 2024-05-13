@@ -30,4 +30,4 @@ class BaseFilter(Filter):
         items = [repr(arg) for arg in args]
         items.extend([f"{k}={v!r}" for k, v in kwargs.items() if v is not None])
 
-        return f"{type(self).__name__}({', '.join(items)})"
+        return f"{type(self).__name__}({", ".join(items)})"

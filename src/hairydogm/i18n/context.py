@@ -26,7 +26,8 @@ def get_i18n() -> I18n:
         If the I18n context is not set.
     """
     if (i18n := I18n.get_current(no_error=True)) is None:
-        raise LookupError("I18n context is not set")
+        msg = "I18n context is not set"
+        raise LookupError(msg)
     return i18n
 
 

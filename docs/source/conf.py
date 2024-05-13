@@ -1,5 +1,8 @@
-import datetime
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024 Hitalo M. <https://github.com/HitaloM>
+
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 docs_dir = Path(__file__).parent.parent
@@ -9,7 +12,9 @@ import hairydogm  # noqa: E402
 
 project = "hairydogm"
 author = "Hitalo M."
-copyright = f"{datetime.date.today().year}, {author}"
+date_time = datetime.now(tz=UTC)
+date = date_time.date()
+copyright = f"{date.year}, {author}"
 release = hairydogm.__version__
 
 extensions = [
@@ -48,9 +53,7 @@ autodoc_typehints = "none"
 
 html_theme = "furo"
 html_title = f"{project} Docs - {release}"
-html_last_updated_fmt = (
-    f"{datetime.datetime.now(tz=datetime.UTC).strftime('%d/%m/%Y, %H:%M:%S')} UTC"
-)
+html_last_updated_fmt = f"{date_time.strftime("%d/%m/%Y, %H:%M:%S")} UTC"
 html_copy_source = False
 
 html_theme_options = {

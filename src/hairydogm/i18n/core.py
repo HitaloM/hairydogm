@@ -144,7 +144,8 @@ class I18n(ContextInstanceMixin["I18n"]):
                 with mo_path.open("rb") as fp:
                     translations[name] = gettext.GNUTranslations(fp)
             elif mo_path.with_suffix(".po").exists():
-                raise RuntimeError(f"Found locale '{name}' but this language is not compiled!")
+                msg = f"Found locale '{name}' but this language is not compiled!"
+                raise RuntimeError(msg)
 
         return translations
 
