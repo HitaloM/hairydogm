@@ -19,31 +19,6 @@ DEFAULT_INITIAL_SLEEP = 0.0
 
 
 class ChatActionSender:
-    """
-    Chat action sender.
-
-    Chat action sender. This utility helps to automatically send chat action until long actions
-    are done to acknowledge bot users that the bot is working and not crashed. It provides a
-    simple-to-use context manager. Technically, the sender starts a background task with an
-    infinite loop that runs until the action is finished and sends the `chat action` every 5
-    seconds.
-
-    Parameters
-    ----------
-    client : Client
-        Instance of the bot.
-    chat_id : str | int
-        Target chat id.
-    message_thread_id : int | None, optional
-        Unique identifier for the target message thread; supergroups only.
-    action : ChatAction, optional
-        Chat action type.
-    interval : float, optional
-        Interval between iterations.
-    initial_sleep : float, optional
-        Sleep before first sending of the action.
-    """
-
     def __init__(
         self,
         *,

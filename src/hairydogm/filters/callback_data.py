@@ -32,19 +32,6 @@ MAX_CALLBACK_LENGTH: int = 64
 
 
 class CallbackData(BaseModel):
-    """
-    Base class for callback data wrapper.
-
-    This class is used to create a wrapper for callback data.
-
-    Attributes
-    ----------
-    __separator__ : ClassVar[str]
-        Data separator (default is ':')
-    __prefix__ : ClassVar[str]
-        Callback prefix
-    """
-
     __separator__: ClassVar[str]
     __prefix__: ClassVar[str]
 
@@ -66,29 +53,6 @@ class CallbackData(BaseModel):
 
     @staticmethod
     def _encode_value(key: str, value: Any) -> str:
-        """
-        Encode the value to a string representation.
-
-        This method is used to encode the value to a string representation.
-
-        Parameters
-        ----------
-        key : str
-            The key of the value.
-        value : typing.Any
-            The value to be encoded.
-
-        Returns
-        -------
-        str
-            The encoded value as a string.
-
-        Raises
-        ------
-        ValueError
-            If the value cannot be packed to callback data.
-        """
-
         if value is None:
             return ""
 
@@ -113,22 +77,6 @@ class CallbackData(BaseModel):
             raise ValueError(msg) from err
 
     def pack(self) -> str:
-        """
-        Generate callback data string.
-
-        This method is used to generate callback data string.
-
-        Returns
-        -------
-        str
-            The generated callback data string.
-
-        Raises
-        ------
-        ValueError
-            If the resulted callback data is too long.
-        """
-
         result = [self.__prefix__]
         for key, value in self.model_dump(mode="json").items():
             encoded = self._encode_value(key, value)
@@ -150,30 +98,6 @@ class CallbackData(BaseModel):
 
     @classmethod
     def unpack(cls: type[T], value: str | bytes) -> T:
-        """
-        Parse callback data string.
-
-        This method is used to parse callback data string.
-
-        Parameters
-        ----------
-        value : str | bytes
-            The value from Telegram.
-
-        Returns
-        -------
-        T
-            An instance of CallbackData.
-
-        Raises
-        ------
-        TypeError
-            If the number of arguments in the callback data does not match the number of fields in
-            CallbackData.
-        ValueError
-            If the prefix in the callback data does not match the prefix in CallbackData.
-        """
-
         prefix, *parts = str(value).split(cls.__separator__)
         names = cls.model_fields.keys()
         if len(parts) != len(names):
@@ -198,40 +122,10 @@ class CallbackData(BaseModel):
 
     @classmethod
     def filter(cls, rule: MagicFilter | None = None) -> CallbackQueryFilter:
-        """
-        Generate a filter for callback query with rule.
-
-        This method is used to generate a filter for callback query with rule.
-
-        Parameters
-        ----------
-        rule : MagicFilter | None, optional
-            The magic rule.
-
-        Returns
-        -------
-        CallbackQueryFilter
-            An instance of filter.
-        """
-
         return CallbackQueryFilter(callback_data=cls, rule=rule)
 
 
 class CallbackQueryFilter(BaseFilter):
-    """
-    This filter helps to handle callback query.
-
-    Should not be used directly, you should create the instance of this filter
-    via callback data instance
-
-    Parameters
-    ----------
-    callback_data : type[CallbackData]
-        Expected type of callback data.
-    rule : MagicFilter or None, optional
-        Magic rule.
-    """
-
     __slots__ = (
         "callback_data",
         "rule",
@@ -255,25 +149,6 @@ class CallbackQueryFilter(BaseFilter):
     async def __call__(
         self, client: Client, query: CallbackQuery
     ) -> Literal[False] | dict[str, Any]:
-        """
-        Execute the callback data filter.
-
-        This method is used to execute the callback data filter.
-
-        Parameters
-        ----------
-        client : Client
-            The client instance.
-        query : CallbackQuery
-            The callback query object.
-
-        Returns
-        -------
-        Literal[False] | dict[str, Any] :
-            Returns False if the query is not a valid callback
-            query or if the callback data cannot be unpacked. Otherwise, returns a dictionary
-            containing the unpacked callback data.
-        """
         if not isinstance(query, CallbackQuery) or not query.data:
             return False
         try:
@@ -287,21 +162,6 @@ class CallbackQueryFilter(BaseFilter):
 
 
 def _check_field_is_nullable(field: FieldInfo) -> bool:
-    """
-    Check if the given field is nullable.
-
-    This function is used to check if the field is nullable or not.
-
-    Parameters
-    ----------
-    field : FieldInfo
-        The field to be checked.
-
-    Returns
-    -------
-    bool
-        True if the field is nullable, False otherwise.
-    """
     return not field.is_required() or (
         typing.get_origin(field.annotation) is typing.Union
         and None in typing.get_args(field.annotation)

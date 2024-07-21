@@ -36,22 +36,13 @@ community = "https://t.me/HitaloProjects"
 source = "https://github.com/HitaloM/hairydogm"
 documentation = "https://hairydogm.readthedocs.io/"
 
-[project.optional-dependencies]
-docs = [
-    "Sphinx>=7.3.7",
-    "furo>=2024.5.6",
-    "sphinx-autobuild>=2024.4.16",
-    "sphinx-copybutton>=0.5.2",
-    "pygments>=2.18.0",
-]
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["pre-commit>=3.7.1", "ruff>=0.4.4"]
+dev-dependencies = ["pre-commit>=3.7.1", "ruff>=0.5.4"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -62,28 +53,28 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = [
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "C90",  # mccabe
-    "CPY",  # flake8-copyright
-    "DTZ",  # flake8-datetimez
-    "E",    # pycodestyle
-    "EM",   # flake8-errmsg
-    "F",    # pyflakes
-    "FURB", # refurb
-    "G",    # flake8-logging-format
-    "I",    # isort
-    "N",    # pep8-naming
-    "PERF", # perflint
-    "PL",   # pylint
-    "PTH",  # flake8-use-pathlib
-    "RET",  # flake8-return
-    "RUF",  # ruff
-    "SIM",  # flake8-simplify
-    "TCH",  # flake8-type-checking
-    "TID",  # flake8-tidy-imports
-    "UP",   # pyupgrade
-    "W",    # pycodestyle
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe
+    "DTZ",   # flake8-datetimez
+    "E",     # pycodestyle
+    "EM",    # flake8-errmsg
+    "F",     # pyflakes
+    "FURB",  # refurb
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "N",     # pep8-naming
+    "PERF",  # perflint
+    "PL",    # pylint
+    "PTH",   # flake8-use-pathlib
+    "RET",   # flake8-return
+    "RUF",   # ruff
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "TID",   # flake8-tidy-imports
+    "UP",    # pyupgrade
+    "W",     # pycodestyle
 ]
 ignore = [
     "RUF001",
@@ -108,11 +99,3 @@ ban-relative-imports = "all"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hairydogm"]
-
-[tool.numpydoc_validation]
-checks = [
-    "all",  # report on all checks, except the below
-    "GL08",
-    "SA01",
-    "EX01",
-]
