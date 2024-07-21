@@ -16,10 +16,9 @@ from typing import (
 )
 from uuid import UUID
 
+from hydrogram.filters import Filter
 from hydrogram.types import CallbackQuery
 from pydantic import BaseModel
-
-from hairydogm.filters.base import BaseFilter
 
 if typing.TYPE_CHECKING:
     from hydrogram import Client
@@ -125,7 +124,7 @@ class CallbackData(BaseModel):
         return CallbackQueryFilter(callback_data=cls, rule=rule)
 
 
-class CallbackQueryFilter(BaseFilter):
+class CallbackQueryFilter(Filter):
     __slots__ = (
         "callback_data",
         "rule",
@@ -139,12 +138,6 @@ class CallbackQueryFilter(BaseFilter):
     ):
         self.callback_data = callback_data
         self.rule = rule
-
-    def __str__(self) -> str:
-        return self._signature_to_string(
-            callback_data=self.callback_data,
-            rule=self.rule,
-        )
 
     async def __call__(
         self, client: Client, query: CallbackQuery

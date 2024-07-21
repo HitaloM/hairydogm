@@ -2,16 +2,21 @@
 # Copyright (c) 2017-2023 Alex Root Junior <https://github.com/JrooTJunior>
 # Copyright (c) 2023-present Hitalo M. <https://github.com/HitaloM>
 
+from __future__ import annotations
+
 import gettext
 import os
-from collections.abc import Generator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from babel.support import LazyProxy
 
 from hairydogm.mixins import ContextInstanceMixin
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class I18n(ContextInstanceMixin["I18n"]):
@@ -45,7 +50,7 @@ class I18n(ContextInstanceMixin["I18n"]):
             self.ctx_locale.reset(ctx_token)
 
     @contextmanager
-    def context(self) -> Generator["I18n", None, None]:
+    def context(self) -> Generator[I18n, None, None]:
         token = self.set_current(self)
         try:
             yield self

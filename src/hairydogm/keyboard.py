@@ -96,7 +96,7 @@ class InlineKeyboardBuilder(Generic[ButtonType]):
     @classmethod
     def from_markup(
         cls: type[InlineKeyboardBuilder[ButtonType]], markup: InlineKeyboardMarkup
-    ) -> InlineKeyboardBuilder[ButtonType]:
+    ) -> InlineKeyboardBuilder[InlineKeyboardButton]:
         return cls(markup=markup.inline_keyboard)
 
     def export(self) -> list[list[ButtonType]]:

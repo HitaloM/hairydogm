@@ -2,18 +2,24 @@
 # Copyright (c) 2017-2024 Alex Root Junior <https://github.com/JrooTJunior>
 # Copyright (c) 2024-present Hitalo M. <https://github.com/HitaloM>
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
 from asyncio import Event, Lock
 from contextlib import suppress
-from types import TracebackType
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from hydrogram import Client
 from hydrogram.enums import ChatAction
 
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from hydrogram import Client
+
 logger = logging.getLogger(__name__)
+
 DEFAULT_INTERVAL = 5.0
 DEFAULT_INITIAL_SLEEP = 0.0
 
@@ -108,7 +114,7 @@ class ChatActionSender:
                 await self._closed_event.wait()
             self._task = None
 
-    async def __aenter__(self) -> "ChatActionSender":
+    async def __aenter__(self) -> ChatActionSender:
         await self._run()
         return self
 
@@ -128,7 +134,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -146,7 +152,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -164,7 +170,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -182,7 +188,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -200,7 +206,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -218,7 +224,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -236,7 +242,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -254,7 +260,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -272,7 +278,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -290,7 +296,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
@@ -308,7 +314,7 @@ class ChatActionSender:
         message_thread_id: int | None = None,
         interval: float = DEFAULT_INTERVAL,
         initial_sleep: float = DEFAULT_INITIAL_SLEEP,
-    ) -> "ChatActionSender":
+    ) -> ChatActionSender:
         return cls(
             client=client,
             chat_id=chat_id,
